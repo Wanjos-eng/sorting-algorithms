@@ -1,7 +1,98 @@
-export function mergeSort(arr: number[]): number[] {
-    return arr;
+import { SortResult, SortMetrics } from '../types/sorting';
+
+/**
+ * Implementação do algoritmo Merge Sort
+ * Complexidade de tempo: O(n log n) em todos os casos
+ * Complexidade de espaço: O(n) devido ao array auxiliar
+ * @param arr Array a ser ordenado
+ * @returns Resultado da ordenação com métricas
+ */
+export function mergeSort(arr: number[]): SortResult {
+    const startTime = performance.now();
+    const metrics: SortMetrics = {
+        comparisons: 0,
+        swaps: 0,
+        time: 0
+    };
+
+    const arrayCopy = [...arr];
+    mergeSortHelper(arrayCopy, 0, arrayCopy.length - 1, metrics);
+
+    metrics.time = performance.now() - startTime;
+    return {
+        sortedArray: arrayCopy,
+        metrics
+    };
 }
 
-function merge(left: number[], right: number[]): number[] {
-    return [...left, ...right];
+/**
+ * Função auxiliar recursiva do Merge Sort
+ * @param arr Array sendo ordenado
+ * @param left Índice inicial
+ * @param right Índice final
+ * @param metrics Objeto para armazenar métricas
+ */
+function mergeSortHelper(arr: number[], left: number, right: number, metrics: SortMetrics): void {
+    if (left < right) {
+        const mid = Math.floor((left + right) / 2);
+        mergeSortHelper(arr, left, mid, metrics);
+        mergeSortHelper(arr, mid + 1, right, metrics);
+        merge(arr, left, mid, right, metrics);
+    }
+}
+
+/**
+ * Função que mescla dois subarrays ordenados
+ * @param arr Array sendo ordenado
+ * @param left Índice inicial
+ * @param mid Índice do meio
+ * @param right Índice final
+ * @param metrics Objeto para armazenar métricas
+ */
+function merge(arr: number[], left: number, mid: number, right: number, metrics: SortMetrics): void {
+    const n1 = mid - left + 1;
+    const n2 = right - mid;
+
+    const L = new Array(n1);
+    const R = new Array(n2);
+
+    for (let i = 0; i < n1; i++) {
+        L[i] = arr[left + i];
+    }
+    for (let j = 0; j < n2; j++) {
+        R[j] = arr[mid + 1 + j];
+    }
+
+    let i = 0;
+    let j = 0;
+    let k = left;
+
+    while (i < n1 && j < n2) {
+        metrics.comparisons++;
+        if (L[i] <= R[j]) {
+            if (arr[k] !== L[i]) {
+                metrics.swaps++;
+            }
+            arr[k++] = L[i++];
+        } else {
+            if (arr[k] !== R[j]) {
+                metrics.swaps++;
+            }
+            arr[k++] = R[j++];
+        }
+    }
+
+    while (i < n1) {
+        if (arr[k] !== L[i]) {
+            metrics.swaps++;
+        }
+        arr[k++] = L[i++];
+    }
+
+    while (j < n2) {
+        if (arr[k] !== R[j]) {
+            metrics.swaps++;
+        }
+        arr[k++] = R[j++];
+    }
 } 
