@@ -188,6 +188,7 @@ function gerarHTML(resultados: { [key: string]: any }) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Resultados dos Algoritmos de Ordenação</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -209,6 +210,15 @@ function gerarHTML(resultados: { [key: string]: any }) {
                 color: #2c3e50;
                 border-bottom: 2px solid #3498db;
                 padding-bottom: 10px;
+            }
+            .chart-container {
+                width: 100%;
+                max-width: 800px;
+                margin: 20px auto;
+                padding: 20px;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             table {
                 width: 100%;
@@ -237,9 +247,13 @@ function gerarHTML(resultados: { [key: string]: any }) {
     `;
 
     for (const [algoritmo, dados] of Object.entries(resultados)) {
+        const chartId = `chart-${algoritmo.toLowerCase().replace(/\s+/g, '-')}`;
         html += `
         <div class="algoritmo">
             <h2>${algoritmo}</h2>
+            <div class="chart-container">
+                <canvas id="${chartId}"></canvas>
+            </div>
             <table>
                 <tr>
                     <th>n</th>
@@ -275,6 +289,66 @@ function gerarHTML(resultados: { [key: string]: any }) {
         html += `
             </table>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ctx = document.getElementById('${chartId}').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ${JSON.stringify(dados.n)},
+                        datasets: [
+                            {
+                                label: 'Array Aleatório',
+                                data: ${JSON.stringify(dados.comparacoes_aleatorio)},
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Array Ordenado',
+                                data: ${JSON.stringify(dados.comparacoes_ordenado)},
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Array Reverso',
+                                data: ${JSON.stringify(dados.comparacoes_reverso)},
+                                borderColor: 'rgb(54, 162, 235)',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Número de Comparações - ${algoritmo}',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Número de Elementos (n)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Número de Comparações'
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
         `;
     }
 
