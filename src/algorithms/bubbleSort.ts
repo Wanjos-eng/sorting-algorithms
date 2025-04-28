@@ -2,7 +2,7 @@ import { SortResult, SortMetrics } from '../types/sorting';
 
 /**
  * Implementação do algoritmo Bubble Sort
- * Complexidade de tempo: O(n²)
+ * Complexidade de tempo: O(n²) no pior caso, O(n) no melhor caso (array já ordenado)
  * Complexidade de espaço: O(1)
  * @param arr Array a ser ordenado
  * @returns Resultado da ordenação com métricas
@@ -20,6 +20,7 @@ export function bubbleSort(arr: number[]): SortResult {
     
     // Percorre o array n-1 vezes
     for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
         // Para cada iteração, flutua o maior elemento até o final
         for (let j = 0; j < n - i - 1; j++) {
             metrics.comparisons++;
@@ -27,7 +28,12 @@ export function bubbleSort(arr: number[]): SortResult {
             if (arrayCopy[j] > arrayCopy[j + 1]) {
                 swap(arrayCopy, j, j + 1);
                 metrics.swaps++;
+                swapped = true;
             }
+        }
+        // Se não houve trocas nesta passagem, o array já está ordenado
+        if (!swapped) {
+            break;
         }
     }
 

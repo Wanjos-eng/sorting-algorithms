@@ -254,6 +254,9 @@ function gerarHTML(resultados: { [key: string]: any }) {
             <div class="chart-container">
                 <canvas id="${chartId}"></canvas>
             </div>
+            <div class="chart-container">
+                <canvas id="swaps-${chartId}"></canvas>
+            </div>
             <table>
                 <tr>
                     <th>n</th>
@@ -291,6 +294,7 @@ function gerarHTML(resultados: { [key: string]: any }) {
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Gráfico de comparações
                 const ctx = document.getElementById('${chartId}').getContext('2d');
                 new Chart(ctx, {
                     type: 'line',
@@ -342,6 +346,64 @@ function gerarHTML(resultados: { [key: string]: any }) {
                                 title: {
                                     display: true,
                                     text: 'Número de Comparações'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfico de trocas
+                const swapsCtx = document.getElementById('swaps-${chartId}').getContext('2d');
+                new Chart(swapsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ${JSON.stringify(dados.n)},
+                        datasets: [
+                            {
+                                label: 'Array Aleatório',
+                                data: ${JSON.stringify(dados.trocas_aleatorio)},
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Array Ordenado',
+                                data: ${JSON.stringify(dados.trocas_ordenado)},
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Array Reverso',
+                                data: ${JSON.stringify(dados.trocas_reverso)},
+                                borderColor: 'rgb(54, 162, 235)',
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Número de Trocas - ${algoritmo}',
+                                font: {
+                                    size: 16
+                                }
+                            },
+                            legend: {
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Número de Elementos (n)'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Número de Trocas'
                                 }
                             }
                         }
