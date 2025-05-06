@@ -412,9 +412,199 @@ function gerarHTML(resultados: { [key: string]: any }) {
             });
         </script>
         `;
-    }
-
+    };
     html += `
+    <div class="chart-container">
+        <canvas id="grafico-comparacoes-geral"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="grafico-trocas-geral"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="grafico-comparacoes-ordenado"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="grafico-trocas-ordenado"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="grafico-comparacoes-inverso"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="grafico-trocas-inverso"></canvas>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const labels = ${JSON.stringify(resultados['Bubble Sort'].n)}; // todos têm o mesmo n
+
+            const datasetsComparacoes = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.comparacoes_aleatorio)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            const datasetsTrocas = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.trocas_aleatorio)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            const datasetsComparacoesOrdenado = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.comparacoes_ordenado)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            const datasetsTrocasOrdenado = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.trocas_ordenado)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            const datasetsComparacoesInverso = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.comparacoes_reverso)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            const datasetsTrocasInverso = [
+                ${Object.entries(resultados).map(([alg, dados]) => `{
+                    label: "${alg}",
+                    data: ${JSON.stringify(dados.comparacoes_reverso)},
+                    fill: false,
+                    tension: 0.1,
+                    borderColor: getRandomColor()
+                }`).join(',')}
+            ];
+
+            new Chart(document.getElementById('grafico-comparacoes-geral').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsComparacoes
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparações - Arrays Aleatórios'
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('grafico-trocas-geral').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsTrocas
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Trocas - Arrays Aleatórios'
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('grafico-comparacoes-ordenado').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsComparacoesOrdenado
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparações - Arrays Ordenados'
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('grafico-trocas-ordenado').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsTrocasOrdenado
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Trocas - Arrays Ordenados'
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('grafico-comparacoes-inverso').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsComparacoesInverso
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Comparações - Arrays Inversos'
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('grafico-trocas-inverso').getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasetsTrocasInverso
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Trocas - Arrays Inversos'
+                        }
+                    }
+                }
+            });
+
+            function getRandomColor() {
+                return 'hsl(' + Math.floor(Math.random() * 360) + ', 70%, 60%)';
+            }
+        });
+    </script>
+
     </body>
     </html>
     `;
