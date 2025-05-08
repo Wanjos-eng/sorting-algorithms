@@ -1,98 +1,102 @@
-import { SortResult, SortMetrics } from '../types/sorting';
+import { ResultadoOrdenacaoDetalhado, MetricasOrdenacao } from '../types/sorting';
 
 /**
- * Implementação do algoritmo Merge Sort
- * Complexidade de tempo: O(n log n) em todos os casos
- * Complexidade de espaço: O(n) devido ao array auxiliar
- * @param arr Array a ser ordenado
- * @returns Resultado da ordenação com métricas
+ * Implementação do algoritmo Merge Sort.
+ * 
+ * - **Complexidade de tempo**: O(n log n) em todos os casos.
+ * - **Complexidade de espaço**: O(n) devido ao array auxiliar.
+ * 
+ * @param {number[]} vetor - Array a ser ordenado.
+ * @returns {ResultadoOrdenacaoDetalhado} Resultado da ordenação com métricas.
  */
-export function mergeSort(arr: number[]): SortResult {
-    const startTime = performance.now();
-    const metrics: SortMetrics = {
-        comparisons: 0,
-        swaps: 0,
-        time: 0
+export function mergeSort(vetor: number[]): ResultadoOrdenacaoDetalhado {
+    const tempoInicial = performance.now();
+    const metricas: MetricasOrdenacao = {
+        comparacoes: 0,
+        trocas: 0,
+        tempo: 0
     };
 
-    const arrayCopy = [...arr];
-    mergeSortHelper(arrayCopy, 0, arrayCopy.length - 1, metrics);
+    const copiaVetor = [...vetor];
+    mergeSortHelper(copiaVetor, 0, copiaVetor.length - 1, metricas);
 
-    metrics.time = performance.now() - startTime;
+    metricas.tempo = performance.now() - tempoInicial;
     return {
-        sortedArray: arrayCopy,
-        metrics
+        arrayOrdenado: copiaVetor,
+        metricas
     };
 }
 
 /**
- * Função auxiliar recursiva do Merge Sort
- * @param arr Array sendo ordenado
- * @param left Índice inicial
- * @param right Índice final
- * @param metrics Objeto para armazenar métricas
+ * Função auxiliar recursiva do Merge Sort.
+ * 
+ * @param {number[]} vetor - Array sendo ordenado.
+ * @param {number} esquerda - Índice inicial.
+ * @param {number} direita - Índice final.
+ * @param {MetricasOrdenacao} metricas - Objeto para armazenar métricas da ordenação.
  */
-function mergeSortHelper(arr: number[], left: number, right: number, metrics: SortMetrics): void {
-    if (left < right) {
-        const mid = Math.floor((left + right) / 2);
-        mergeSortHelper(arr, left, mid, metrics);
-        mergeSortHelper(arr, mid + 1, right, metrics);
-        merge(arr, left, mid, right, metrics);
+function mergeSortHelper(vetor: number[], esquerda: number, direita: number, metricas: MetricasOrdenacao): void {
+    if (esquerda < direita) {
+        const meio = Math.floor((esquerda + direita) / 2);
+        mergeSortHelper(vetor, esquerda, meio, metricas);
+        mergeSortHelper(vetor, meio + 1, direita, metricas);
+        merge(vetor, esquerda, meio, direita, metricas);
     }
 }
 
 /**
- * Função que mescla dois subarrays ordenados
- * @param arr Array sendo ordenado
- * @param left Índice inicial
- * @param mid Índice do meio
- * @param right Índice final
- * @param metrics Objeto para armazenar métricas
+ * Função que mescla dois subarrays ordenados.
+ * 
+ * @param {number[]} vetor - Array sendo ordenado.
+ * @param {number} esquerda - Índice inicial.
+ * @param {number} meio - Índice do meio.
+ * @param {number} direita - Índice final.
+ * @param {MetricasOrdenacao} metricas - Objeto para armazenar métricas da ordenação.
  */
-function merge(arr: number[], left: number, mid: number, right: number, metrics: SortMetrics): void {
-    const n1 = mid - left + 1;
-    const n2 = right - mid;
+function merge(vetor: number[], esquerda: number, meio: number, direita: number, metricas: MetricasOrdenacao): void {
+    const tamanhoEsquerda = meio - esquerda + 1;
+    const tamanhoDireita = direita - meio;
 
-    const L = new Array(n1);
-    const R = new Array(n2);
+    const esquerdaArray = new Array(tamanhoEsquerda);
+    const direitaArray = new Array(tamanhoDireita);
 
-    for (let i = 0; i < n1; i++) {
-        L[i] = arr[left + i];
+    for (let i = 0; i < tamanhoEsquerda; i++) {
+        esquerdaArray[i] = vetor[esquerda + i];
     }
-    for (let j = 0; j < n2; j++) {
-        R[j] = arr[mid + 1 + j];
+    for (let j = 0; j < tamanhoDireita; j++) {
+        direitaArray[j] = vetor[meio + 1 + j];
     }
 
     let i = 0;
     let j = 0;
-    let k = left;
+    let k = esquerda;
 
-    while (i < n1 && j < n2) {
-        metrics.comparisons++;
-        if (L[i] <= R[j]) {
-            if (arr[k] !== L[i]) {
-                metrics.swaps++;
+    while (i < tamanhoEsquerda && j < tamanhoDireita) {
+        metricas.comparacoes++;
+        if (esquerdaArray[i] <= direitaArray[j]) {
+            if (vetor[k] !== esquerdaArray[i]) {
+                metricas.trocas++;
             }
-            arr[k++] = L[i++];
+            vetor[k++] = esquerdaArray[i++];
         } else {
-            if (arr[k] !== R[j]) {
-                metrics.swaps++;
+            if (vetor[k] !== direitaArray[j]) {
+                metricas.trocas++;
             }
-            arr[k++] = R[j++];
+            vetor[k++] = direitaArray[j++];
         }
     }
 
-    while (i < n1) {
-        if (arr[k] !== L[i]) {
-            metrics.swaps++;
+    while (i < tamanhoEsquerda) {
+        if (vetor[k] !== esquerdaArray[i]) {
+            metricas.trocas++;
         }
-        arr[k++] = L[i++];
+        vetor[k++] = esquerdaArray[i++];
     }
 
-    while (j < n2) {
-        if (arr[k] !== R[j]) {
-            metrics.swaps++;
+    while (j < tamanhoDireita) {
+        if (vetor[k] !== direitaArray[j]) {
+            metricas.trocas++;
         }
-        arr[k++] = R[j++];
+        vetor[k++] = direitaArray[j++];
     }
-} 
+}

@@ -1,41 +1,54 @@
-export interface SortingResult {
-    random: number[];
-    sorted: number[];
-    reversed: number[];
+export interface ResultadoOrdenacao {
+    aleatorio: number[];
+    ordenado: number[];
+    reverso: number[];
 }
 
-export interface AlgorithmData {
-    [key: string]: SortingResult;
+export interface DadosAlgoritmo {
+    [chave: string]: ResultadoOrdenacao;
 }
 
-export interface ChartData {
+/**
+ * Interface para os dados do gráfico compatível com Chart.js.
+ */
+export interface DadosGrafico {
     labels: string[];
     datasets: {
         label: string;
         data: number[];
         borderColor: string;
-        tension: number;
+        backgroundColor?: string;
+        tension?: number; 
     }[];
 }
 
-export interface ChartOptions {
-    responsive: boolean;
-    plugins: {
-        title: {
-            display: boolean;
+/**
+ * Interface para as opções do gráfico compatível com Chart.js.
+ */
+export interface OpcoesGrafico {
+    responsive: boolean; 
+    plugins?: {
+        title?: {
+            display: boolean; 
             text: string;
+            font?: {
+                size?: number;
+            };
+        };
+        legend?: {
+            position?: 'top' | 'left' | 'right' | 'bottom';
         };
     };
     scales?: {
-        y: {
-            beginAtZero: boolean;
-            title: {
-                display: boolean;
+        y?: {
+            beginAtZero?: boolean; 
+            title?: {
+                display: boolean; 
                 text: string;
             };
         };
-        x: {
-            title: {
+        x?: {
+            title?: {
                 display: boolean;
                 text: string;
             };
@@ -43,13 +56,13 @@ export interface ChartOptions {
     };
 }
 
-export interface SortMetrics {
-    comparisons: number;
-    swaps: number;
-    time: number;
+export interface MetricasOrdenacao {
+    comparacoes: number;
+    trocas: number;
+    tempo: number;
 }
 
-export interface SortResult {
-    sortedArray: number[];
-    metrics: SortMetrics;
-} 
+export interface ResultadoOrdenacaoDetalhado {
+    arrayOrdenado: number[];
+    metricas: MetricasOrdenacao;
+}

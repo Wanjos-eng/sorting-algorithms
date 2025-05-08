@@ -1,63 +1,73 @@
-import { SortResult, SortMetrics } from '../types/sorting';
+import { ResultadoOrdenacaoDetalhado, MetricasOrdenacao } from '../types/sorting';
 
 /**
- * Implementação do algoritmo Selection Sort
- * Complexidade de tempo: O(n²)
- * Complexidade de espaço: O(1)
- * @param arr Array a ser ordenado
- * @returns Resultado da ordenação com métricas
+ * Implementação do algoritmo Selection Sort.
+ * 
+ * - **Complexidade de tempo**: O(n²)
+ * - **Complexidade de espaço**: O(1)
+ * 
+ * @param {number[]} vetor - Array a ser ordenado.
+ * @returns {ResultadoOrdenacaoDetalhado} Resultado da ordenação com métricas.
  */
-export function selectionSort(arr: number[]): SortResult {
-    const startTime = performance.now();
-    const metrics: SortMetrics = {
-        comparisons: 0,
-        swaps: 0,
-        time: 0
+export function selectionSort(vetor: number[]): ResultadoOrdenacaoDetalhado {
+    const tempoInicial = performance.now();
+    const metricas: MetricasOrdenacao = {
+        comparacoes: 0,
+        trocas: 0,
+        tempo: 0
     };
 
-    const arrayCopy = [...arr];
-    const n = arrayCopy.length;
+    const copiaVetor = [...vetor];
+    const tamanho = copiaVetor.length;
     
     // Percorre o array
-    for (let i = 0; i < n - 1; i++) {
+    for (let i = 0; i < tamanho - 1; i++) {
         // Encontra o menor elemento no resto do array
-        const minIdx = findMinIndex(arrayCopy, i, metrics);
+        const indiceMenor = encontrarIndiceMenor(copiaVetor, i, metricas);
         
         // Se o menor elemento não for o atual, faz a troca
-        if (minIdx !== i) {
-            swap(arrayCopy, i, minIdx);
-            metrics.swaps++;
+        if (indiceMenor !== i) {
+            trocar(copiaVetor, i, indiceMenor);
+            metricas.trocas++;
         }
     }
 
-    metrics.time = performance.now() - startTime;
+    metricas.tempo = performance.now() - tempoInicial;
     return {
-        sortedArray: arrayCopy,
-        metrics
+        arrayOrdenado: copiaVetor,
+        metricas
     };
 }
 
 /**
- * Encontra o índice do menor elemento a partir de um índice inicial
- * @param arr Array para buscar
- * @param startIndex Índice inicial da busca
- * @param metrics Objeto para armazenar métricas
- * @returns Índice do menor elemento encontrado
+ * Encontra o índice do menor elemento a partir de um índice inicial.
+ * 
+ * @param {number[]} vetor - Array para buscar.
+ * @param {number} indiceInicial - Índice inicial da busca.
+ * @param {MetricasOrdenacao} metricas - Objeto para armazenar métricas.
+ * @returns {number} Índice do menor elemento encontrado.
  */
-function findMinIndex(arr: number[], startIndex: number, metrics: SortMetrics): number {
-    let minIdx = startIndex;
+function encontrarIndiceMenor(vetor: number[], indiceInicial: number, metricas: MetricasOrdenacao): number {
+    let indiceMenor = indiceInicial;
     
     // Procura o menor elemento no resto do array
-    for (let j = startIndex + 1; j < arr.length; j++) {
-        metrics.comparisons++;
-        if (arr[j] < arr[minIdx]) {
-            minIdx = j;
+    for (let j = indiceInicial + 1; j < vetor.length; j++) {
+        metricas.comparacoes++;
+        if (vetor[j] < vetor[indiceMenor]) {
+            indiceMenor = j;
         }
     }
     
-    return minIdx;
+    return indiceMenor;
 }
 
-function swap(arr: number[], i: number, j: number): void {
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-} 
+/**
+ * Troca dois elementos de posição em um array.
+ * 
+ * @param {number[]} vetor - Array contendo os elementos.
+ * @param {number} i - Índice do primeiro elemento.
+ * @param {number} j - Índice do segundo elemento.
+ */
+function trocar(vetor: number[], i: number, j: number): void {
+    [vetor[i], vetor[j]] = [vetor[j], vetor[i]];
+}

@@ -1,75 +1,91 @@
-import { SortResult, SortMetrics } from '../types/sorting';
+import { ResultadoOrdenacaoDetalhado, MetricasOrdenacao } from '../types/sorting';
 
 /**
- * Implementação do algoritmo Heap Sort
- * Complexidade de tempo: O(n log n) em todos os casos
- * Complexidade de espaço: O(1)
- * @param arr Array a ser ordenado
- * @returns Resultado da ordenação com métricas
+ * Implementação do algoritmo Heap Sort.
+ * 
+ * - **Complexidade de tempo**: O(n log n) em todos os casos.
+ * - **Complexidade de espaço**: O(1).
+ * 
+ * @param {number[]} vetor - Array a ser ordenado.
+ * @returns {ResultadoOrdenacaoDetalhado} Resultado da ordenação com métricas.
  */
-export function heapSort(arr: number[]): SortResult {
-    const startTime = performance.now();
-    const metrics: SortMetrics = {
-        comparisons: 0,
-        swaps: 0,
-        time: 0
+export function heapSort(vetor: number[]): ResultadoOrdenacaoDetalhado {
+    const tempoInicial = performance.now();
+    const metricas: MetricasOrdenacao = {
+        comparacoes: 0,
+        trocas: 0,
+        tempo: 0
     };
 
-    const arrayCopy = [...arr];
-    const n = arrayCopy.length;
+    const copiaVetor = [...vetor];
+    const tamanho = copiaVetor.length;
 
     // Construir max-heap
-    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-        heapify(arrayCopy, n, i, metrics);
+    for (let i = Math.floor(tamanho / 2) - 1; i >= 0; i--) {
+        heapify(copiaVetor, tamanho, i, metricas);
     }
 
     // Extrair elementos do heap um por um
-    for (let i = n - 1; i > 0; i--) {
-        swap(arrayCopy, 0, i);
-        metrics.swaps++;
-        heapify(arrayCopy, i, 0, metrics);
+    for (let i = tamanho - 1; i > 0; i--) {
+        trocar(copiaVetor, 0, i);
+        metricas.trocas++;
+        heapify(copiaVetor, i, 0, metricas);
     }
 
-    metrics.time = performance.now() - startTime;
+    metricas.tempo = performance.now() - tempoInicial;
     return {
-        sortedArray: arrayCopy,
-        metrics
+        arrayOrdenado: copiaVetor,
+        metricas
     };
 }
 
 /**
- * Função auxiliar para manter a propriedade de max-heap
- * @param arr Array sendo ordenado
- * @param n Tamanho do heap
- * @param i Índice do nó atual
- * @param metrics Objeto para armazenar métricas
+ * Função auxiliar para manter a propriedade de max-heap.
+ * 
+ * - Um max-heap é uma estrutura de dados onde o valor de cada nó é maior ou igual
+ *   aos valores de seus filhos. Esta função ajusta o heap para garantir essa propriedade.
+ * 
+ * @param {number[]} vetor - Array sendo ordenado.
+ * @param {number} tamanho - Tamanho do heap.
+ * @param {number} i - Índice do nó atual.
+ * @param {MetricasOrdenacao} metricas - Objeto para armazenar métricas da ordenação.
  */
-function heapify(arr: number[], n: number, i: number, metrics: SortMetrics): void {
-    let largest = i;
-    const left = 2 * i + 1;
-    const right = 2 * i + 2;
+function heapify(vetor: number[], tamanho: number, i: number, metricas: MetricasOrdenacao): void {
+    let maior = i;
+    const esquerda = 2 * i + 1;
+    const direita = 2 * i + 2;
 
-    if (left < n) {
-        metrics.comparisons++;
-        if (arr[left] > arr[largest]) {
-            largest = left;
+    // Verifica se o filho da esquerda é maior que o nó atual
+    if (esquerda < tamanho) {
+        metricas.comparacoes++;
+        if (vetor[esquerda] > vetor[maior]) {
+            maior = esquerda;
         }
     }
 
-    if (right < n) {
-        metrics.comparisons++;
-        if (arr[right] > arr[largest]) {
-            largest = right;
+    // Verifica se o filho da direita é maior que o maior nó encontrado até agora
+    if (direita < tamanho) {
+        metricas.comparacoes++;
+        if (vetor[direita] > vetor[maior]) {
+            maior = direita;
         }
     }
 
-    if (largest !== i) {
-        swap(arr, i, largest);
-        metrics.swaps++;
-        heapify(arr, n, largest, metrics);
+    // Se o maior não for o nó atual, troca os elementos e ajusta o heap recursivamente
+    if (maior !== i) {
+        trocar(vetor, i, maior);
+        metricas.trocas++;
+        heapify(vetor, tamanho, maior, metricas);
     }
 }
 
-function swap(arr: number[], i: number, j: number): void {
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-} 
+/**
+ * Troca dois elementos de posição em um array.
+ * 
+ * @param {number[]} vetor - Array contendo os elementos.
+ * @param {number} i - Índice do primeiro elemento.
+ * @param {number} j - Índice do segundo elemento.
+ */
+function trocar(vetor: number[], i: number, j: number): void {
+    [vetor[i], vetor[j]] = [vetor[j], vetor[i]];
+}

@@ -1,55 +1,60 @@
-import { SortResult, SortMetrics } from '../types/sorting';
+import { ResultadoOrdenacaoDetalhado, MetricasOrdenacao } from '../types/sorting';
 
 /**
- * Implementação do algoritmo Bubble Sort
- * Complexidade de tempo: O(n²) no pior caso, O(n) no melhor caso (array já ordenado)
- * Complexidade de espaço: O(1)
- * @param arr Array a ser ordenado
- * @returns Resultado da ordenação com métricas
+ * Implementação do algoritmo Bubble Sort.
+ * 
+ * - **Complexidade de tempo**: 
+ *   - Pior caso: O(n²)
+ *   - Melhor caso (array já ordenado): O(n)
+ * - **Complexidade de espaço**: O(1)
+ * 
+ * @param {number[]} vetor - Array a ser ordenado.
+ * @returns {ResultadoOrdenacaoDetalhado} Resultado da ordenação com métricas.
  */
-export function bubbleSort(arr: number[]): SortResult {
-    const startTime = performance.now();
-    const metrics: SortMetrics = {
-        comparisons: 0,
-        swaps: 0,
-        time: 0
+export function bubbleSort(vetor: number[]): ResultadoOrdenacaoDetalhado {
+    const tempoInicial = performance.now();
+    const metricas: MetricasOrdenacao = {
+        comparacoes: 0,
+        trocas: 0,
+        tempo: 0
     };
 
-    const arrayCopy = [...arr];
-    const n = arrayCopy.length;
+    const copiaVetor = [...vetor];
+    const tamanho = copiaVetor.length;
     
     // Percorre o array n-1 vezes
-    for (let i = 0; i < n - 1; i++) {
-        let swapped = false;
+    for (let i = 0; i < tamanho - 1; i++) {
+        let houveTrocas = false;
         // Para cada iteração, flutua o maior elemento até o final
-        for (let j = 0; j < n - i - 1; j++) {
-            metrics.comparisons++;
+        for (let j = 0; j < tamanho - i - 1; j++) {
+            metricas.comparacoes++;
             // Compara elementos adjacentes
-            if (arrayCopy[j] > arrayCopy[j + 1]) {
-                swap(arrayCopy, j, j + 1);
-                metrics.swaps++;
-                swapped = true;
+            if (copiaVetor[j] > copiaVetor[j + 1]) {
+                trocarElementos(copiaVetor, j, j + 1);
+                metricas.trocas++;
+                houveTrocas = true;
             }
         }
         // Se não houve trocas nesta passagem, o array já está ordenado
-        if (!swapped) {
+        if (!houveTrocas) {
             break;
         }
     }
 
-    metrics.time = performance.now() - startTime;
+    metricas.tempo = performance.now() - tempoInicial;
     return {
-        sortedArray: arrayCopy,
-        metrics
+        arrayOrdenado: copiaVetor,
+        metricas
     };
 }
 
 /**
- * Função auxiliar para trocar dois elementos no array
- * @param arr Array contendo os elementos
- * @param i Índice do primeiro elemento
- * @param j Índice do segundo elemento
+ * Troca dois elementos de posição em um array.
+ * 
+ * @param {number[]} vetor - Array contendo os elementos.
+ * @param {number} i - Índice do primeiro elemento.
+ * @param {number} j - Índice do segundo elemento.
  */
-function swap(arr: number[], i: number, j: number): void {
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+function trocarElementos(vetor: number[], i: number, j: number): void {
+    [vetor[i], vetor[j]] = [vetor[j], vetor[i]];
 }
